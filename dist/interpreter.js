@@ -58,7 +58,7 @@ exports.InterpreterWarning = InterpreterWarning;
 async function main() {
     const interpreter = new Interpreter();
     await interpreter.parse("The response of 1+1 is {calculate(1+1)}");
-    await interpreter.parse("Merci en anglais se dit {translate('Merci', 'en')}");
+    await interpreter.parse("Voici les resultats de la recherche {search('Stephen Hawking')}");
 }
 main().catch((error) => {
     if (error instanceof InterpreterError) {

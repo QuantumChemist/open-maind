@@ -3,6 +3,7 @@ import type { CoreMessage } from 'ai';
 import { groq } from '@ai-sdk/groq';
 import { Client, Message, GatewayIntentBits } from 'discord.js';
 import { config } from 'dotenv';
+import { Interpreter } from './interpreter';
 
 import { WeightsApi } from './weights-api';
 const weightsApi = new WeightsApi(process.env?.WEIGHTS_API_KEY || '');
@@ -11,6 +12,8 @@ config({ path: "./config/.env" });
 const client: Client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
+const interpreter = new Interpreter();
+
 const botLore: string = `You are the friendly Discord chatbot assistant openmAInd with an open-minded mindset!
  Your Discord tag is "<@1361438123317395516>". There is no need to mention your tag or reflect about it in your responses.
  You can answer questions, provide information, and assist users in a helpful manner. 
@@ -34,6 +37,9 @@ client.on('messageCreate', async (message: Message) => {
         system: botLore,
         messages: prompt,
       });
+
+      await interpreter.parse(text);
+
       message.reply({ content: text, allowedMentions: { parse: [] } });
     } catch (error: any) {
       console.error('Error generating text:', error);

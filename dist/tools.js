@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tools = void 0;
-//@ts-ignore
-const translatte_1 = require("translatte");
+let timers = new Map();
 const tools = {
     calculate: async (expression) => {
         const sanitizedExpression = expression.replace(/[^0-9+\-*/().]/g, '');
@@ -16,15 +15,23 @@ const tools = {
             throw new Error('Invalid mathematical expression');
         }
     },
-    translate: async (text, targetLanguage) => {
-        return await (0, translatte_1.translatte)('Do you speak Russian?', { to: 'de' }).catch((err) => {
-            console.error(err);
-        });
-    },
-    search: async (query) => {
-        // Implement search functionality
-        throw new Error('Not implemented');
-    },
+    // translate: async (text: string, targetLanguage: string): Promise<Object> => {  //hello :"", I will proceed with implementing some commands
+    //     const resultDetect = await libreTranslate.detect(text) as string;
+    //     return await libreTranslate.translate('Do you speak Russian?', resultDetect, targetLanguage);
+    // },
+    // search: async (query: string) => {
+    //     const options = {
+    //         page: 0, 
+    //         safe: false, // Safe Search
+    //         parse_ads: false, // If set to true sponsored results will be parsed
+    //         // additional_params: { 
+    //         //     // add additional parameters here, see https://moz.com/blog/the-ultimate-guide-to-the-google-search-parameters and https://www.seoquake.com/blog/google-search-param/
+    //         //     hl: 'en' 
+    //         // }
+    //     }
+    //     const response = await googlethis.search(query, options);
+    //     return response.knowledge_panel?.description || response.results;
+    // },
     executeCode: async (code) => {
         // Implement code execution with proper safety measures
         throw new Error('Not implemented');
@@ -46,17 +53,23 @@ const tools = {
         throw new Error('Not implemented');
     },
     startTimer: (duration, callback) => {
-        return setTimeout(callback, duration);
+        const timer = setTimeout(callback, duration);
+        const timerId = timers.size + 1; // Simple ID generation
+        timers.set(timerId, timer);
+        return timer;
     },
     listTimers: () => {
-        // Implement timer listing
-        return [];
+        return Array.from(timers.keys());
     },
     cancelTimer: (timerId) => {
-        clearTimeout(timerId);
+        const timer = timers.get(timerId);
+        if (timer) {
+            clearTimeout(timer);
+            timers.delete(timerId);
+        }
     },
     addLink: (url) => {
-        // Implement link adding
+        // Implement link 
         throw new Error('Not implemented');
     }
 };
