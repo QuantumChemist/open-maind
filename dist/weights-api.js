@@ -9,6 +9,7 @@ const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)({ path: "./config/.env" });
 // Example usage:
 /*
+import { WeightsApi } from './weights-api';
 const api = new WeightsApi('your-api-key');
 
 // Get health status
@@ -37,7 +38,7 @@ api.generateProgressiveImage(
 class WeightsApi {
     constructor(apiKey) {
         this.apiKey = null;
-        this.endpoint = process.env.WEIGHTS_UNOFFICIAL_ENDPOINT || 'https://lumiantis.com';
+        this.endpoint = process.env.WEIGHTS_UNOFFICIAL_ENDPOINT || '';
         /**
          * Retrieves health status of the API
          * @returns Promise with health data
@@ -162,7 +163,6 @@ class WeightsApi {
             const { imageId } = await this.generateImage(params);
             const statusResponse = await this.getStatus({ imageId });
             let { status } = statusResponse;
-            let lastModifiedDate = null;
             let oldModifiedDate = null;
             while (status !== 'COMPLETED') {
                 await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100 milliseconds
