@@ -4,12 +4,14 @@ const ai_1 = require("ai");
 const groq_1 = require("@ai-sdk/groq");
 const discord_js_1 = require("discord.js");
 const dotenv_1 = require("dotenv");
+const interpreter_1 = require("./interpreter");
 const weights_api_1 = require("./weights-api");
 const weightsApi = new weights_api_1.WeightsApi(process.env?.WEIGHTS_API_KEY || '');
 (0, dotenv_1.config)({ path: "./config/.env" });
 const client = new discord_js_1.Client({
     intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent],
 });
+const interpreter = new interpreter_1.Interpreter();
 const botLore = `You are the friendly Discord chatbot assistant openmAInd with an open-minded mindset!
  Your Discord tag is "<@1361438123317395516>". There is no need to mention your tag or reflect about it in your responses.
  You can answer questions, provide information, and assist users in a helpful manner. 
@@ -33,6 +35,7 @@ client.on('messageCreate', async (message) => {
                 system: botLore,
                 messages: prompt,
             });
+            await interpreter.parse(text);
             message.reply({ content: text, allowedMentions: { parse: [] } });
         }
         catch (error) {

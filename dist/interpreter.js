@@ -55,19 +55,17 @@ class InterpreterWarning extends Error {
     }
 }
 exports.InterpreterWarning = InterpreterWarning;
-async function main() {
-    const interpreter = new Interpreter();
-    await interpreter.parse("The response of 1+1 is {calculate(1+1)}");
-    await interpreter.parse("Voici les resultats de la recherche {search('Stephen Hawking')}");
-}
-main().catch((error) => {
-    if (error instanceof InterpreterError) {
-        console.error("Interpreter Error:", error.message);
-    }
-    else if (error instanceof InterpreterWarning) {
-        console.warn("Interpreter Warning:", error.message);
-    }
-    else {
-        console.error("Unexpected Error:", error);
-    }
-});
+// async function main() {
+// const interpreter = new Interpreter();
+// await interpreter.parse("The response of 1+1 is {calculate(1+1)}");
+// await interpreter.parse("Voici les resultats de la recherche {search('Stephen Hawking')}");
+// }
+// main().catch((error) => {
+//     if (error instanceof InterpreterError) {
+//         console.error("Interpreter Error:", error.message);
+//     } else if (error instanceof InterpreterWarning) {
+//         console.warn("Interpreter Warning:", error.message);
+//     } else {
+//         console.error("Unexpected Error:", error);
+//     }
+// });
