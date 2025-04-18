@@ -1,4 +1,5 @@
-coming soon:
- # Open mAInd
+ # openmAInd
 
- a TS based Discord chatbot to test the Vercel AI SDK
+ ![logo: brain glowing in pink shades to look cool and cute](./utils/logo.png)
+
+ a TS based Discord chatbot using the Vercel AI SDK
