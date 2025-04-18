@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@ai-sdk/groq": "^1.2.8",
+    "@ai-sdk/react": "^1.2.9",
+    "ai": "^4.3.9"
+  }
+}
