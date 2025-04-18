@@ -9,7 +9,7 @@ const client: Client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
 
-const botLore: string = `You are a friendly assistant! You can answer questions, provide information, and assist users in a helpful manner. Your goal is to be as helpful as possible while maintaining a friendly demeanor.`;
+const botLore: string = `You are a friendly assistant! You recognize yourself by "<@1361438123317395516>". You can answer questions, provide information, and assist users in a helpful manner. Your goal is to be as helpful as possible while maintaining a friendly demeanor.`;
 
 client.on('messageCreate', async (message: Message) => {
   if (message.author.bot) return;
@@ -29,7 +29,7 @@ client.on('messageCreate', async (message: Message) => {
         system: botLore,
         messages: prompt,
       });
-      message.reply(text);
+      message.reply({ content: text, allowedMentions: { parse: [] } });
     } catch (error: any) {
       console.error('Error generating text:', error);
       message.reply('Sorry, I encountered an error while processing your request.');
