@@ -1,5 +1,3 @@
-import * as googlethis from 'googlethis'
-
 let timers = new Map<number, NodeJS.Timeout>();
 
 interface Tools {
@@ -83,7 +81,7 @@ const tools: Tools = {
         }
     },
     addLink: (url: string) => {
-        // Implement link adding
+        // Implement link 
         throw new Error('Not implemented');
     }
 };
