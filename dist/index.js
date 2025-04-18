@@ -5,6 +5,7 @@ const groq_1 = require("@ai-sdk/groq");
 const discord_js_1 = require("discord.js");
 const dotenv_1 = require("dotenv");
 const interpreter_1 = require("./interpreter");
+// import { generatePlotImage } from './commands/plot';
 const weights_api_1 = require("./weights-api");
 const weightsApi = new weights_api_1.WeightsApi(process.env?.WEIGHTS_API_KEY || '');
 (0, dotenv_1.config)({ path: "./config/.env" });
@@ -19,6 +20,8 @@ const botLore = `You are the friendly Discord chatbot assistant openmAInd with a
 client.on('messageCreate', async (message) => {
     if (message.author.bot)
         return;
+    if (message.content.includes('plot')) {
+    }
     if (message.mentions.users.has(client.user?.id || '')) {
         const messages = await message.channel.messages.fetch({ limit: 7 });
         const prompt = messages

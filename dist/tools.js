@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tools = void 0;
+const plot_1 = require("./commands/plot");
 let timers = new Map();
 const tools = {
     calculate: async (expression) => {
@@ -71,6 +72,10 @@ const tools = {
     addLink: (url) => {
         // Implement link 
         throw new Error('Not implemented');
+    },
+    plot: async (data) => {
+        // Implement plotting
+        return await (0, plot_1.generatePlotImage)([...data.xData], [...data.yData], data.title);
     }
 };
 exports.tools = tools;

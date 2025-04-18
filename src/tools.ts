@@ -1,3 +1,5 @@
+import { generatePlotImage } from "./commands/plot";
+
 let timers = new Map<number, NodeJS.Timeout>();
 
 interface Tools {
@@ -13,6 +15,7 @@ interface Tools {
     listTimers(): Array<number>;
     cancelTimer(timerId: number): void;
     addLink(url: string): void;
+    plot (data: any): Promise<string>; 
 }
 
 const tools: Tools = {
@@ -83,6 +86,12 @@ const tools: Tools = {
     addLink: (url: string) => {
         // Implement link 
         throw new Error('Not implemented');
+    },
+    plot: async (data: {  xData: number[],
+        yData: number[],
+        title: string}) => {
+        // Implement plotting
+        return await generatePlotImage([...data.xData], [...data.yData], data.title);
     }
 };
 

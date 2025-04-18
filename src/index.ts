@@ -4,6 +4,7 @@ import { groq } from '@ai-sdk/groq';
 import { Client, Message, GatewayIntentBits } from 'discord.js';
 import { config } from 'dotenv';
 import { Interpreter } from './interpreter';
+// import { generatePlotImage } from './commands/plot';
 
 import { WeightsApi } from './weights-api';
 const weightsApi = new WeightsApi(process.env?.WEIGHTS_API_KEY || '');
@@ -21,6 +22,8 @@ const botLore: string = `You are the friendly Discord chatbot assistant openmAIn
 
 client.on('messageCreate', async (message: Message) => {
   if (message.author.bot) return;
+  if (message.content.includes('plot')) {
+  } 
   if (message.mentions.users.has(client.user?.id || '')) {
     const messages = await message.channel.messages.fetch({ limit: 7 });
     const prompt: CoreMessage[] = messages 
