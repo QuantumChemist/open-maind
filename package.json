@@ -10,9 +10,11 @@
     "@ai-sdk/react": "^1.2.9",
     "ai": "^4.3.9",
     "discord.js": "^14.18.0",
-    "dotenv": "^16.5.0"
+    "dotenv": "^16.5.0",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@types/node-fetch": "^2.6.12"
   }
 }

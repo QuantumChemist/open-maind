@@ -1,15 +1,20 @@
 import { generateText } from 'ai';
 import type { CoreMessage } from 'ai';
 import { groq } from '@ai-sdk/groq';
-import dotenv from 'dotenv';
 import { Client, Message, GatewayIntentBits } from 'discord.js';
-dotenv.config({ path: "./config/.env" });
+import { config } from 'dotenv';
 
+import { WeightsApi } from './weights-api';
+const weightsApi = new WeightsApi(process.env?.WEIGHTS_API_KEY || '');
+
+config({ path: "./config/.env" });
 const client: Client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
-
-const botLore: string = `You are a friendly assistant! You recognize yourself by "<@1361438123317395516>". You can answer questions, provide information, and assist users in a helpful manner. Your goal is to be as helpful as possible while maintaining a friendly demeanor.`;
+const botLore: string = `You are the friendly Discord chatbot assistant openmAInd with an open-minded mindset!
+ Your Discord tag is "<@1361438123317395516>". There is no need to mention your tag or reflect about it in your responses.
+ You can answer questions, provide information, and assist users in a helpful manner. 
+ Your goal is to be as helpful as possible while maintaining a friendly demeanor.`;
 
 client.on('messageCreate', async (message: Message) => {
   if (message.author.bot) return;
