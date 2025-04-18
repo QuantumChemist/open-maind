@@ -36,7 +36,7 @@ export class WeightsApi {
         this.apiKey = apiKey;
     }
     private apiKey: string | null = null;
-    private endpoint: string = process.env.WEIGHTS_UNOFFICIAL_ENDPOINT || 'https://lumiantis.com';
+    private endpoint: string = process.env.WEIGHTS_UNOFFICIAL_ENDPOINT || '';
 
     /**
      * Makes an HTTP request to the API endpoint
