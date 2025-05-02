@@ -10,8 +10,18 @@
         "forceConsistentCasingInFileNames": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,
-        "typeRoots": ["src/@types", "node_modules/@types"]
+        "typeRoots": ["src/@types", "node_modules/@types"],
+        "baseUrl": "./",
+        "paths": {
+            "weights-api": ["../weights.gg-api/libs/weights-api"]
+        }
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
+    "include": [
+        "src/**/*", 
+        "../weights.gg-api/libs/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }
