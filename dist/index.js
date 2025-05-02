@@ -7,24 +7,28 @@ const dotenv_1 = require("dotenv");
 const interpreter_1 = require("./interpreter");
 const tools_1 = require("./tools");
 const weights_api_1 = require("./weights-api");
-const weightsApi = new weights_api_1.WeightsApi(process.env?.WEIGHTS_API_KEY || '');
-(0, dotenv_1.config)({ path: "./config/.env" });
+(0, dotenv_1.config)({ path: './config/.env' });
 const client = new discord_js_1.Client({
-    intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent],
+    intents: [
+        discord_js_1.GatewayIntentBits.Guilds,
+        discord_js_1.GatewayIntentBits.GuildMessages,
+        discord_js_1.GatewayIntentBits.MessageContent,
+    ],
 });
 const interpreter = new interpreter_1.Interpreter();
+const weightsApi = new weights_api_1.WeightsApi(process.env?.WEIGHTS_API_KEY || '');
 const botLore = `You are the friendly Discord chatbot assistant openmAInd with an open-minded mindset!
- Your Discord tag is "<@1361438123317395516>". There is no need to mention your tag or reflect about it in your responses.
- You can answer questions, provide information, and assist users in a helpful manner. 
- Your goal is to be as helpful as possible while maintaining a friendly demeanor.`;
+Your Discord tag is "<@1361438123317395516>". There is no need to mention your tag or reflect about it in your responses.
+You can answer questions, provide information, and assist users in a helpful manner.
+Your goal is to be as helpful as possible while maintaining a friendly demeanor.`;
 client.on('messageCreate', async (message) => {
     if (message.author.bot)
         return;
     if (message.mentions.users.has(client.user?.id || '')) {
         const messages = await message.channel.messages.fetch({ limit: 7 });
         const prompt = messages
-            .filter(msg => !msg.author.bot || client.user?.id == msg.author.id)
-            .map(msg => ({
+            .filter((msg) => !msg.author.bot || client.user?.id === msg.author.id)
+            .map((msg) => ({
             role: msg.author.id === message.author.id ? 'user' : 'assistant',
             content: msg.content,
         }))
@@ -35,20 +39,38 @@ client.on('messageCreate', async (message) => {
                 system: botLore,
                 messages: prompt,
             });
-            await interpreter.parse(text);
-            // Check for tools and use them if applicable
             for (const [toolName, toolFunction] of Object.entries(tools_1.tools)) {
                 if (message.content.toLowerCase().includes(toolName.toLowerCase())) {
-                    const toolResult = await toolFunction(message.content);
-                    message.reply({ content: toolResult, allowedMentions: { parse: [] } });
-                    return; // Exit after using the tool
+                    let toolResult;
+                    if (toolName === 'plot') {
+                        const match = message.content.match(/plot\s*\((.*?)\)/is);
+                        if (!match) {
+                            await message.reply('❌ Please provide data like: `plot({ xData: [1,2,3], yData: [4,5,6], title: "My Plot" })`');
+                            return;
+                        }
+                        try {
+                            const data = eval(`(${match[1]})`);
+                            toolResult = await toolFunction(data);
+                        }
+                        catch (err) {
+                            console.error(err);
+                            await message.reply('⚠️ Could not parse your plot data. Make sure it’s valid JavaScript object syntax.');
+                            return;
+                        }
+                    }
+                    else {
+                        toolResult = await toolFunction(message.content);
+                    }
+                    await message.reply({ content: toolResult, allowedMentions: { parse: [] } });
+                    return;
                 }
             }
-            message.reply({ content: text, allowedMentions: { parse: [] } });
+            await interpreter.parse(text);
+            await message.reply({ content: text, allowedMentions: { parse: [] } });
         }
         catch (error) {
             console.error('Error generating text:', error);
-            message.reply('Sorry, I encountered an error while processing your request.');
+            await message.reply('Sorry, I encountered an error while processing your request.');
         }
     }
 });

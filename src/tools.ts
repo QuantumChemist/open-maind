@@ -87,12 +87,19 @@ const tools: Tools = {
         // Implement link 
         throw new Error('Not implemented');
     },
-    plot: async (data: {  xData: number[],
-        yData: number[],
-        title: string}) => {
-        // Implement plotting
-        return await generatePlotImage([...data.xData], [...data.yData], data.title);
-    }
+    plot: async (data: { xData: number[]; yData: number[]; title: string }) => {
+        if (
+          !data ||
+          !Array.isArray(data.xData) ||
+          !Array.isArray(data.yData) ||
+          !data.xData.every(n => typeof n === 'number') ||
+          !data.yData.every(n => typeof n === 'number')
+        ) {
+          throw new TypeError('Invalid plot data: xData and yData must be arrays of numbers.');
+        }
+    
+        return await generatePlotImage(data.xData, data.yData, data.title);
+    }    
 };
 
 export { tools };

@@ -74,8 +74,14 @@ const tools = {
         throw new Error('Not implemented');
     },
     plot: async (data) => {
-        // Implement plotting
-        return await (0, plot_1.generatePlotImage)([...data.xData], [...data.yData], data.title);
+        if (!data ||
+            !Array.isArray(data.xData) ||
+            !Array.isArray(data.yData) ||
+            !data.xData.every(n => typeof n === 'number') ||
+            !data.yData.every(n => typeof n === 'number')) {
+            throw new TypeError('Invalid plot data: xData and yData must be arrays of numbers.');
+        }
+        return await (0, plot_1.generatePlotImage)(data.xData, data.yData, data.title);
     }
 };
 exports.tools = tools;
