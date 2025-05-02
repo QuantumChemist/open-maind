@@ -6,7 +6,7 @@ import { config } from 'dotenv';
 import { Interpreter } from './interpreter';
 // import { generatePlotImage } from './commands/plot';
 
-import { WeightsApi } from '../../weights.gg-api/libs/weights-api';
+import { WeightsApi } from './weights-api';
 const weightsApi = new WeightsApi(process.env?.WEIGHTS_API_KEY || '');
 
 config({ path: "./config/.env" });
