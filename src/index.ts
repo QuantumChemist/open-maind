@@ -4,7 +4,7 @@ import { groq } from '@ai-sdk/groq';
 import { Client, Message, GatewayIntentBits } from 'discord.js';
 import { config } from 'dotenv';
 import { Interpreter } from './interpreter';
-// import { generatePlotImage } from './commands/plot';
+import {tools} from '.tools';
 
 import { WeightsApi } from './weights-api';
 const weightsApi = new WeightsApi(process.env?.WEIGHTS_API_KEY || '');
@@ -24,22 +24,31 @@ client.on('messageCreate', async (message: Message) => {
   if (message.author.bot) return;
   if (message.mentions.users.has(client.user?.id || '')) {
     const messages = await message.channel.messages.fetch({ limit: 7 });
-    const prompt: CoreMessage[] = messages 
+    const prompt: CoreMessage[] = messages
       .filter(msg => !msg.author.bot || client.user?.id == msg.author.id)
       .map(msg => ({
         role: msg.author.id === message.author.id ? 'user' : 'assistant',
         content: msg.content,
       } as CoreMessage))
       .reverse();
-    // const prompt = message.content.replace(/<@!?\d+>/g, '').trim();
+
     try {
-      const { text }: {text: string} = await generateText({
+      const { text }: { text: string } = await generateText({
         model: groq('llama-3.3-70b-versatile'),
         system: botLore,
         messages: prompt,
       });
 
       await interpreter.parse(text);
+
+      // Check for tools and use them if applicable
+      for (const [toolName, toolFunction] of Object.entries(tools)) {
+        if (message.content.toLowerCase().includes(toolName.toLowerCase())) {
+          const toolResult = await toolFunction(message.content);
+          message.reply({ content: toolResult, allowedMentions: { parse: [] } });
+          return; // Exit after using the tool
+        }
+      }
 
       message.reply({ content: text, allowedMentions: { parse: [] } });
     } catch (error: any) {
@@ -50,7 +59,7 @@ client.on('messageCreate', async (message: Message) => {
 });
 
 client.once('ready', () => {
-  console.log('Bot is online!');
+  console.log(`${client.user?.username} is online!`);
 });
 
 client.login(process.env.DISCORD_TOKEN);
