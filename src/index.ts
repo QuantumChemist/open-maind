@@ -4,7 +4,7 @@ import { groq } from '@ai-sdk/groq';
 import { Client, Message, GatewayIntentBits } from 'discord.js';
 import { config } from 'dotenv';
 import { Interpreter } from './interpreter';
-import {tools} from '.tools';
+import { tools } from './tools';
 
 import { WeightsApi } from './weights-api';
 const weightsApi = new WeightsApi(process.env?.WEIGHTS_API_KEY || '');
