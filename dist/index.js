@@ -5,7 +5,7 @@ const groq_1 = require("@ai-sdk/groq");
 const discord_js_1 = require("discord.js");
 const dotenv_1 = require("dotenv");
 const interpreter_1 = require("./interpreter");
-// import { generatePlotImage } from './commands/plot';
+const tools_1 = require("./tools");
 const weights_api_1 = require("./weights-api");
 const weightsApi = new weights_api_1.WeightsApi(process.env?.WEIGHTS_API_KEY || '');
 (0, dotenv_1.config)({ path: "./config/.env" });
@@ -20,8 +20,6 @@ const botLore = `You are the friendly Discord chatbot assistant openmAInd with a
 client.on('messageCreate', async (message) => {
     if (message.author.bot)
         return;
-    if (message.content.includes('plot')) {
-    }
     if (message.mentions.users.has(client.user?.id || '')) {
         const messages = await message.channel.messages.fetch({ limit: 7 });
         const prompt = messages
@@ -31,7 +29,6 @@ client.on('messageCreate', async (message) => {
             content: msg.content,
         }))
             .reverse();
-        // const prompt = message.content.replace(/<@!?\d+>/g, '').trim();
         try {
             const { text } = await (0, ai_1.generateText)({
                 model: (0, groq_1.groq)('llama-3.3-70b-versatile'),
@@ -39,6 +36,14 @@ client.on('messageCreate', async (message) => {
                 messages: prompt,
             });
             await interpreter.parse(text);
+            // Check for tools and use them if applicable
+            for (const [toolName, toolFunction] of Object.entries(tools_1.tools)) {
+                if (message.content.toLowerCase().includes(toolName.toLowerCase())) {
+                    const toolResult = await toolFunction(message.content);
+                    message.reply({ content: toolResult, allowedMentions: { parse: [] } });
+                    return; // Exit after using the tool
+                }
+            }
             message.reply({ content: text, allowedMentions: { parse: [] } });
         }
         catch (error) {
@@ -48,6 +53,6 @@ client.on('messageCreate', async (message) => {
     }
 });
 client.once('ready', () => {
-    console.log('Bot is online!');
+    console.log(`${client.user?.username} is online!`);
 });
 client.login(process.env.DISCORD_TOKEN);
