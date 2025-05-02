@@ -7,6 +7,13 @@ exports.generatePlotImage = generatePlotImage;
 const node_html_to_image_1 = __importDefault(require("node-html-to-image"));
 const path_1 = __importDefault(require("path"));
 async function generatePlotImage(xData, yData, title = 'openmAInd Plot') {
+    // Validate inputs
+    if (!Array.isArray(xData) || !xData.every(n => typeof n === 'number')) {
+        throw new TypeError('xData must be an array of numbers');
+    }
+    if (!Array.isArray(yData) || !yData.every(n => typeof n === 'number')) {
+        throw new TypeError('yData must be an array of numbers');
+    }
     const html = `
     <html>
       <head>
@@ -23,7 +30,7 @@ async function generatePlotImage(xData, yData, title = 'openmAInd Plot') {
             mode: 'lines+markers',
             marker: { color: 'blue' }
           }], {
-            title: '${title}'
+            title: ${JSON.stringify(title)}
           });
         </script>
       </body>
@@ -40,5 +47,5 @@ async function generatePlotImage(xData, yData, title = 'openmAInd Plot') {
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         },
     });
-    return outputPath; // letse see 
+    return outputPath;
 }

@@ -39,8 +39,6 @@ client.on('messageCreate', async (message: Message) => {
         messages: prompt,
       });
 
-      await interpreter.parse(text);
-
       // Check for tools and use them if applicable
       for (const [toolName, toolFunction] of Object.entries(tools)) {
         if (message.content.toLowerCase().includes(toolName.toLowerCase())) {
@@ -49,6 +47,8 @@ client.on('messageCreate', async (message: Message) => {
           return; // Exit after using the tool
         }
       }
+
+      await interpreter.parse(text);
 
       message.reply({ content: text, allowedMentions: { parse: [] } });
     } catch (error: any) {

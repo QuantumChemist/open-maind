@@ -6,6 +6,14 @@ export async function generatePlotImage(
   yData: number[],
   title = 'openmAInd Plot'
 ): Promise<string> {
+  // Validate inputs
+  if (!Array.isArray(xData) || !xData.every(n => typeof n === 'number')) {
+    throw new TypeError('xData must be an array of numbers');
+  }
+  if (!Array.isArray(yData) || !yData.every(n => typeof n === 'number')) {
+    throw new TypeError('yData must be an array of numbers');
+  }
+
   const html = `
     <html>
       <head>
@@ -22,7 +30,7 @@ export async function generatePlotImage(
             mode: 'lines+markers',
             marker: { color: 'blue' }
           }], {
-            title: '${title}'
+            title: ${JSON.stringify(title)}
           });
         </script>
       </body>
@@ -37,10 +45,10 @@ export async function generatePlotImage(
     type: 'png',
     quality: 100,
     puppeteerArgs: {
-      headless: true, 
+      headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     },
   });
 
-  return outputPath; // letse see 
+  return outputPath;
 }
