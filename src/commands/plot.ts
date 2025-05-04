@@ -45,7 +45,7 @@ export async function generatePlotImage(
     type: 'png',
     quality: 100,
     puppeteerArgs: {
-      executablePath: '/usr/bin/chromium-browser', // <- use '/usr/bin/chromium' if this doesn't exist
+      executablePath: '/usr/bin/chromium-browser',
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     },
