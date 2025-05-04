@@ -7,14 +7,26 @@ export async function generatePlotImage(
   yData: number[],
   title = 'openmAInd Plot'
 ): Promise<string> {
+  if (
+    !Array.isArray(xData) ||
+    !Array.isArray(yData) ||
+    !xData.every(n => typeof n === 'number') ||
+    !yData.every(n => typeof n === 'number')
+  ) {
+    throw new Error('xData and yData must be arrays of numbers');
+  }
+
+  // Load Plotly locally to avoid network timeout
+  const plotlyScript = fs.readFileSync('./plotly.min.js', 'utf8');
+
   const html = `
     <html>
       <head>
         <meta charset="utf-8">
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
       </head>
       <body>
         <div id="plot" style="width:600px;height:400px;"></div>
+        <script>${plotlyScript}</script>
         <script>
           Plotly.newPlot('plot', [{
             x: ${JSON.stringify(xData)},
@@ -45,7 +57,7 @@ export async function generatePlotImage(
 
   const page = await browser.newPage();
   await page.setViewport({ width: 600, height: 400 });
-  await page.setContent(html, { waitUntil: 'networkidle0' });
+  await page.setContent(html, { waitUntil: 'load', timeout: 60000 }); // wait until page fully loads
 
   const plotElement = await page.$('#plot');
   if (!plotElement) throw new Error('Plot element not found');
