@@ -1,20 +1,12 @@
-import nodeHtmlToImage from 'node-html-to-image';
+import fs from 'fs';
 import path from 'path';
+import puppeteer from 'puppeteer';
 
 export async function generatePlotImage(
   xData: number[],
   yData: number[],
   title = 'openmAInd Plot'
 ): Promise<string> {
-  if (
-    !Array.isArray(xData) ||
-    !Array.isArray(yData) ||
-    !xData.every(n => typeof n === 'number') ||
-    !yData.every(n => typeof n === 'number')
-  ) {
-    throw new Error('xData and yData must be arrays of numbers');
-  }
-
   const html = `
     <html>
       <head>
@@ -40,17 +32,26 @@ export async function generatePlotImage(
 
   const outputPath = path.resolve('./plot.png');
 
-  await nodeHtmlToImage({
-    output: outputPath,
-    html,
-    type: 'png',
-    quality: 100,
-    puppeteerArgs: {
-      executablePath: '/usr/bin/chromium', 
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    },
+  const browser = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium', // or chromium-browser if needed
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-gpu',
+      '--disable-software-rasterizer',
+    ],
   });
 
-  return outputPath; // ✅ ensures return type Promise<string>
+  const page = await browser.newPage();
+  await page.setViewport({ width: 600, height: 400 });
+  await page.setContent(html, { waitUntil: 'networkidle0' });
+
+  const plotElement = await page.$('#plot');
+  if (!plotElement) throw new Error('Plot element not found');
+
+  await plotElement.screenshot({ path: outputPath });
+  await browser.close();
+
+  return outputPath;
 }
