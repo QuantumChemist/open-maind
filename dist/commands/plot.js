@@ -4,15 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generatePlotImage = generatePlotImage;
-const node_html_to_image_1 = __importDefault(require("node-html-to-image"));
 const path_1 = __importDefault(require("path"));
+const puppeteer_1 = __importDefault(require("puppeteer"));
 async function generatePlotImage(xData, yData, title = 'openmAInd Plot') {
-    if (!Array.isArray(xData) ||
-        !Array.isArray(yData) ||
-        !xData.every(n => typeof n === 'number') ||
-        !yData.every(n => typeof n === 'number')) {
-        throw new Error('xData and yData must be arrays of numbers');
-    }
     const html = `
     <html>
       <head>
@@ -36,16 +30,23 @@ async function generatePlotImage(xData, yData, title = 'openmAInd Plot') {
     </html>
   `;
     const outputPath = path_1.default.resolve('./plot.png');
-    await (0, node_html_to_image_1.default)({
-        output: outputPath,
-        html,
-        type: 'png',
-        quality: 100,
-        puppeteerArgs: {
-            executablePath: '/usr/bin/chromium',
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        },
+    const browser = await puppeteer_1.default.launch({
+        executablePath: '/usr/bin/chromium', // or chromium-browser if needed
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu',
+            '--disable-software-rasterizer',
+        ],
     });
-    return outputPath; // ✅ ensures return type Promise<string>
+    const page = await browser.newPage();
+    await page.setViewport({ width: 600, height: 400 });
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    const plotElement = await page.$('#plot');
+    if (!plotElement)
+        throw new Error('Plot element not found');
+    await plotElement.screenshot({ path: outputPath });
+    await browser.close();
+    return outputPath;
 }
