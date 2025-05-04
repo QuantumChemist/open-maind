@@ -6,12 +6,13 @@ export async function generatePlotImage(
   yData: number[],
   title = 'openmAInd Plot'
 ): Promise<string> {
-  // Validate inputs
-  if (!Array.isArray(xData) || !xData.every(n => typeof n === 'number')) {
-    throw new TypeError('xData must be an array of numbers');
-  }
-  if (!Array.isArray(yData) || !yData.every(n => typeof n === 'number')) {
-    throw new TypeError('yData must be an array of numbers');
+  if (
+    !Array.isArray(xData) ||
+    !Array.isArray(yData) ||
+    !xData.every(n => typeof n === 'number') ||
+    !yData.every(n => typeof n === 'number')
+  ) {
+    throw new Error('xData and yData must be arrays of numbers');
   }
 
   const html = `
@@ -45,11 +46,11 @@ export async function generatePlotImage(
     type: 'png',
     quality: 100,
     puppeteerArgs: {
-      executablePath: '/usr/bin/chromium-browser',
+      executablePath: '/usr/bin/chromium', 
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     },
   });
 
-  return outputPath;
+  return outputPath; // ✅ ensures return type Promise<string>
 }
