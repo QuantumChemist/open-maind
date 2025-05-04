@@ -7,12 +7,11 @@ exports.generatePlotImage = generatePlotImage;
 const node_html_to_image_1 = __importDefault(require("node-html-to-image"));
 const path_1 = __importDefault(require("path"));
 async function generatePlotImage(xData, yData, title = 'openmAInd Plot') {
-    // Validate inputs
-    if (!Array.isArray(xData) || !xData.every(n => typeof n === 'number')) {
-        throw new TypeError('xData must be an array of numbers');
-    }
-    if (!Array.isArray(yData) || !yData.every(n => typeof n === 'number')) {
-        throw new TypeError('yData must be an array of numbers');
+    if (!Array.isArray(xData) ||
+        !Array.isArray(yData) ||
+        !xData.every(n => typeof n === 'number') ||
+        !yData.every(n => typeof n === 'number')) {
+        throw new Error('xData and yData must be arrays of numbers');
     }
     const html = `
     <html>
@@ -48,4 +47,5 @@ async function generatePlotImage(xData, yData, title = 'openmAInd Plot') {
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         },
     });
+    return outputPath; // ✅ ensures return type Promise<string>
 }
