@@ -18,7 +18,6 @@ const client: Client = new Client({
 });
 
 const interpreter = new Interpreter();
-const weightsApi = new WeightsApi(process.env?.WEIGHTS_API_KEY || '');
 
 const botLore: string = `You are the friendly Discord chatbot assistant openmAInd with an open-minded mindset!
 Your Discord tag is "<@1361438123317395516>". There is no need to mention your tag or reflect about it in your responses.
